@@ -1,0 +1,2 @@
+dest_dir: /tmp/
+home_dir: "{{ playbook_dir | dirname }}"

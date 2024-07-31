@@ -1,0 +1,24 @@
+- name : Ansible tips and tricks part #3
+  hosts: localhost
+  vars: 
+    home_dir : "{{ playbook_dir | dirname }}"
+    dest_dir : "/tmp"
+    COPY: "{{ lookup('env', 'COPY') }}"
+  tasks:
+    - name: copy all files and directories
+      become: true 
+      synchronize:
+        src: "{{ home_dir }}"
+        dest: "{{ dest_dir }}"
+        rsync_opts:
+          # - "--exclude=.git/"
+          - "--exclude=.gitignore"
+          - "--exclude=README.md"
+          - "--exclude=ansible/"
+          - "--exclude=venv/"
+      when : COPY|default(False) == True
+
+    - name: run when COPY variable is not defined :)
+      debug:
+        msg: "COPY varialbe is not defined, sir :/"
+      when : COPY != True

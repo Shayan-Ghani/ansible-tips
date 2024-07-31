@@ -1,0 +1,26 @@
+---
+
+- hosts: localhost
+  vars: 
+    HOME_DIR : "{{ playbook_dir | dirname }}"
+    SCRIPT_DIR: "{{HOME_DIR}}/scripts"
+    variable: "something:))"
+  tasks:
+    - name : test linter
+      shell : script_dir={{SCRIPT_DIR}} {{ HOME_DIR }}/scripts/test.sh
+      ignore_errors: true
+      register: linter
+    
+    - name : Fail if Terraform lint script failed
+      fail: 
+        msg: "{{ linter.stderr | default(linter.stdout, true) }}"
+      when: linter.rc != 0
+
+    - name : a simple print
+      debug: 
+        msg: "I am the next happy task :))"
+
+
+
+
+
