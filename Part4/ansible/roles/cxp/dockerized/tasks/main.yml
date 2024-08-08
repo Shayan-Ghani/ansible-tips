@@ -1,0 +1,70 @@
+---
+- name : Checkout to Container-Exporter Repository
+  git:
+    repo: "{{repo_addr}}"
+    dest: "{{repo_path}}"
+
+- name: Wait for docker compose file to get created
+  ansible.builtin.wait_for:
+    path: "{{compose_file}}"
+    state: present
+    timeout: 3
+
+- name: build CXP
+  become: true
+  shell: CONTEXT={{repo_path}} docker compose -f {{compose_file}} build
+  ignore_errors: true
+  register : build_result
+
+- name: fail if build failed 
+  fail: 
+    msg: "{{ build_result.stderr | default(build_result.stdout, true) }}"
+  when: build_result.rc != 0 
+
+
+- name: wait for the containers to get Built
+  ansible.builtin.wait_for:
+    timeout: 3
+  delegate_to: localhost
+
+
+- name: deploy CXP
+  become: true
+  shell: docker compose -f {{compose_file}} up -d
+  ignore_errors: true
+  register : deploy_result
+
+- name: fail if deploy failed 
+  fail: 
+    msg: "{{ deploy_result.stderr | default(deploy_result.stdout, true) }}"
+  when: deploy_result.rc != 0 
+
+- name: Wait for CXP to be ready
+  ansible.builtin.wait_for:
+    port: 8000
+    state: started
+    timeout: 10
+
+- name: output the address
+  debug:
+    msg : "You can now see CXP on http://127.0.0.1:8000"
+
+
+- name: ensure prometheus is configured for cxp
+  ansible.builtin.wait_for:
+    path: "{{prom_config_file}}"
+    state: present
+    search_regex: container-exporter
+    timeout: 5
+
+
+
+- name: Deploy prometheus
+  shell: docker compose -f {{prom_compose_file}} up -d
+
+- name: Wait for Prometheus to be ready
+  ansible.builtin.wait_for:
+    port: 9090
+    state: started
+    timeout: 300
+

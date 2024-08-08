@@ -1,0 +1,11 @@
+- name: Deploy web server
+  ansible.builtin.shell: |
+    sudo apt-get install -y nginx python3
+    sudo systemctl start nginx
+    python3 -m http.server 8080 &
+
+- name: Ensure web server is running
+  ansible.builtin.wait_for:
+    port: 80
+    state: started
+    timeout: 300

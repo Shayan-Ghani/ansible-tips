@@ -1,0 +1,19 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Wait for the write to take effect
+      ansible.builtin.wait_for:
+        path: "{{demo_file_path}}"
+        state: present
+        timeout: 
+
+    - name: Append to the file
+      ansible.builtin.lineinfile:
+        path: "{{demo_file_path}}"
+        line: "Role C was here"
+        insertafter: EOF
+
+
+
+

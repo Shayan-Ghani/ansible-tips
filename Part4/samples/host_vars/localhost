@@ -1,0 +1,4 @@
+project_dir : "{{ playbook_dir | dirname }}"
+dest_dir : "/tmp"
+path : "{{ dest_dir }}/{{ project_dir }}"
+demo_file_path : "{{ path }}/demo_file.txt"

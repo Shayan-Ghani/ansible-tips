@@ -1,0 +1,11 @@
+- name: Configure database
+  ansible.builtin.shell: |
+    sudo apt-get update
+    sudo apt-get install -y mysql-server
+    sudo systemctl start mysql
+
+- name: Wait for MySQL to be ready
+  ansible.builtin.wait_for:
+    port: 3306
+    state: started
+    timeout: 300

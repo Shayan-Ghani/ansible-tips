@@ -1,0 +1,15 @@
+---
+
+- hosts: localhost
+  tasks:
+
+    - name: Wait for file to be created
+      ansible.builtin.wait_for:
+        path: "{{demo_file_path}}"
+        state: present
+        timeout: 2
+
+    - name: Write to the file
+      ansible.builtin.lineinfile:
+        path: "{{demo_file_path}}"
+        line: "Role B was here"

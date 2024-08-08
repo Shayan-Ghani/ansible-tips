@@ -1,0 +1,10 @@
+- name : Ansible tips and tricks part #3
+  hosts: localhost
+  tasks:
+    - name: copy all files and directories
+      become: true 
+      synchronize:
+        src: "{{ project_dir }}"
+        dest: "{{ dest_dir }}"
+        rsync_opts:
+          - "--exclude=ansible/"

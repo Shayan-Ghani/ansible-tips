@@ -1,0 +1,13 @@
+---
+
+- hosts: localhost
+  tasks:
+    - name: Wait for dir to get created
+      ansible.builtin.wait_for:
+        path: "{{demo_file_path}}"
+        state: present
+        timeout: 2
+    - name: Create a file
+      ansible.builtin.file:
+        path: "{{demo_file_path}}"
+        state: touch

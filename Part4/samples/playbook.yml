@@ -1,0 +1,42 @@
+# playbook.yml
+- hosts: all
+  become: yes
+  tasks:
+    - name: Create a file
+      ansible.builtin.file:
+        path: /tmp/demo_file.txt
+        state: touch
+
+    - name: Wait for file to be created
+      ansible.builtin.wait_for:
+        path: /tmp/demo_file.txt
+        state: present
+        timeout: 3
+
+    - name: Write to the file
+      ansible.builtin.lineinfile:
+        path: /tmp/demo_file.txt
+        line: "Role B was here"
+
+    - name: Wait for the write to 
+      ansible.builtin.wait_for:
+        path: /tmp/demo_file.txt
+        state: present
+        timeout: 3
+
+    - name: Append to the file
+      ansible.builtin.lineinfile:
+        path: /tmp/demo_file.txt
+        line: "Role C was here"
+        insertafter: EOF
+
+# search_regex with files and wait_for
+
+## resolvable host 
+
+  # roles:
+  #   - role: deploy
+  #   - role: database
+  #     when: deploy_result.changed # Ensure B only runs if A was changed
+  #   - role: Monitoring
+  #     when: database.changed # Ensure C only runs if A was changed
