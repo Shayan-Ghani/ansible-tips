@@ -1,0 +1,14 @@
+docker_images:
+  v1:
+    name: hello-world
+    tag: latest
+  v1.1:
+    name: busybox
+    tag: latest
+
+
+docker_images_list:
+  - name: hello-world
+    tag: latest
+  - name : busybox
+    tag : latest

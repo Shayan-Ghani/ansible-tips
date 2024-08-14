@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: pull necessary docker images
+      community.docker.docker_image:
+        name: "{{ item.value.name }}"
+        source: pull
+        tag: "{{ item.value.tag }}"
+      loop: "{{ docker_images | dict2items }}"
+
+    - name: print out docker images
+      debug:
+        msg: "{{ docker_images | dict2items }}"
